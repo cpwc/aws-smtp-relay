@@ -71,7 +71,7 @@ The `aws-smtp-relay` binary can be installed from source via
 [go get](https://golang.org/cmd/go/):
 
 ```sh
-go get github.com/blueimp/aws-smtp-relay
+go get github.com/cpwc/aws-smtp-relay
 ```
 
 ## Usage
@@ -303,7 +303,7 @@ to a `string` value:
 First, clone the project and then switch into its source directory:
 
 ```sh
-git clone https://github.com/blueimp/aws-smtp-relay.git
+git clone https://github.com/cpwc/aws-smtp-relay.git
 cd aws-smtp-relay
 ```
 
