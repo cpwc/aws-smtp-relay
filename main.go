@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cpwc/aws-smtp-relay/internal/auth"
 	"github.com/cpwc/aws-smtp-relay/internal/relay"
 	pinpointrelay "github.com/cpwc/aws-smtp-relay/internal/relay/pinpoint"
 	sesrelay "github.com/cpwc/aws-smtp-relay/internal/relay/ses"
@@ -52,8 +51,8 @@ func server() (srv *smtpd.Server, err error) {
 		TLSRequired:  *startTLS,
 		TLSListener:  *onlyTLS,
 		AuthRequired: ipMap != nil || *user != "",
-		AuthHandler:  auth.New(ipMap, *user, bcryptHash, password).Handler,
-		AuthMechs:    authMechs,
+		// AuthHandler:  auth.New(ipMap, *user, bcryptHash, password).Handler,
+		AuthMechs: authMechs,
 	}
 	if *certFile != "" && *keyFile != "" {
 		keyPass := os.Getenv("TLS_KEY_PASS")
