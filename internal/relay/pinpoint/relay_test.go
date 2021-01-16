@@ -9,7 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/pinpointemail"
 	"github.com/aws/aws-sdk-go/service/pinpointemail/pinpointemailiface"
-	"github.com/blueimp/aws-smtp-relay/internal/relay"
+	"github.com/cpwc/aws-smtp-relay/internal/relay"
 )
 
 var testData = struct{ input *pinpointemail.SendEmailInput }{}

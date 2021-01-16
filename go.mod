@@ -1,4 +1,4 @@
-module github.com/blueimp/aws-smtp-relay
+module github.com/cpwc/aws-smtp-relay
 
 go 1.14
 
