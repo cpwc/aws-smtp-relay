@@ -38,6 +38,9 @@ var relayClient relay.Client
 
 func server() (srv *smtpd.Server, err error) {
 	authMechs := make(map[string]bool)
+	// Forcing to allow LOGIN/PLAIN without TLS
+	authMechs["LOGIN"] = true
+	authMechs["PLAIN"] = true
 	if *user != "" && len(bcryptHash) > 0 && len(password) == 0 {
 		authMechs["CRAM-MD5"] = false
 	}
