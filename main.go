@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/cpwc/aws-smtp-relay/internal/auth"
 	"github.com/cpwc/aws-smtp-relay/internal/relay"
 	pinpointrelay "github.com/cpwc/aws-smtp-relay/internal/relay/pinpoint"
 	sesrelay "github.com/cpwc/aws-smtp-relay/internal/relay/ses"
@@ -31,7 +32,6 @@ var (
 )
 
 var ipMap map[string]bool
-var bcryptHash []byte
 var password []byte
 var relayClient relay.Client
 
@@ -40,9 +40,9 @@ func server() (srv *smtpd.Server, err error) {
 	// Forcing to allow LOGIN/PLAIN without TLS
 	authMechs["LOGIN"] = true
 	authMechs["PLAIN"] = true
-	if *user != "" && len(bcryptHash) > 0 && len(password) == 0 {
-		authMechs["CRAM-MD5"] = false
-	}
+	// if *user != "" && len(bcryptHash) > 0 && len(password) == 0 {
+	// 	authMechs["CRAM-MD5"] = false
+	// }
 	srv = &smtpd.Server{
 		Addr:         *addr,
 		Handler:      relayClient.Send,
@@ -51,8 +51,8 @@ func server() (srv *smtpd.Server, err error) {
 		TLSRequired:  *startTLS,
 		TLSListener:  *onlyTLS,
 		AuthRequired: ipMap != nil || *user != "",
-		// AuthHandler:  auth.New(ipMap, *user, bcryptHash, password).Handler,
-		AuthMechs: authMechs,
+		AuthHandler:  auth.New(ipMap, *user, password).Handler,
+		AuthMechs:    authMechs,
 	}
 	if *certFile != "" && *keyFile != "" {
 		keyPass := os.Getenv("TLS_KEY_PASS")
@@ -95,7 +95,6 @@ func configure() error {
 			ipMap[ip] = true
 		}
 	}
-	bcryptHash = []byte(os.Getenv("BCRYPT_HASH"))
 	password = []byte(os.Getenv("PASSWORD"))
 	return nil
 }

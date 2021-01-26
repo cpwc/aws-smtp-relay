@@ -10,15 +10,12 @@ import (
 	"errors"
 	"hash"
 	"net"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Authentication implements the AuthHandler interface.
 type Authentication struct {
 	ips  map[string]bool
 	user string
-	hash []byte
 	pass []byte
 	err  error
 }
@@ -59,8 +56,6 @@ func (a Authentication) Handler(
 			}
 			return validMAC(md5.New, shared, messageMac[:n], a.pass), nil
 		}
-		err := bcrypt.CompareHashAndPassword(a.hash, password)
-		return err == nil, err
 	}
 	return true, nil
 }
@@ -68,23 +63,17 @@ func (a Authentication) Handler(
 // New creates a new Authentication config.
 // ips are required for IP access restriction.
 // user is required for LOGIN, PLAIN and CRAM-MD5 authentication.
-// hash (recommended) or pass is required for LOGIN and PLAIN authentication.
 // pass is required for CRAM-MD5 authentication (requires plain text password).
 func New(
 	ips map[string]bool,
 	user string,
-	hash []byte,
 	pass []byte,
 ) Authentication {
 	var err error
-	if len(pass) > 0 && len(hash) == 0 {
-		hash, err = bcrypt.GenerateFromPassword(pass, 10)
-	}
 	return Authentication{
 		ips:  ips,
 		user: user,
 		pass: pass,
-		hash: hash,
 		err:  err,
 	}
 }
